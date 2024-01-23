@@ -1,3 +1,0 @@
-# DrugPT-Net
-
-lalalal
