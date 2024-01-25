@@ -26,18 +26,18 @@ conda env create -f DrugPT-Net.yaml
 
 # Data
 1. Input file
-   *__Drug response data__*: data/model_input/IC50_revised/[train/valid/test]_IC50_[random/cell]_cv[1-10].txt
-   *__Gene expression data__*: data/cell2exp_[final/standardscale].txt
-   *__Cell line index file__*: data/cell2ind_final.txt
-   *__Gene index file__*: data/gene2ind_final.txt
-   *__Drug index file__*: data/gene2ind_final.txt
-   *__Ontology graph file__*: data/ontology_final.txt
-   *__Drug fingerprint embedded file__*: data/drug2fingerprint_2048.txt
+   * __Drug response data__: data/model_input/IC50_revised/[train/valid/test]_IC50_[random/cell]_cv[1-10].txt
+   * __Gene expression data__: data/cell2exp_[final/standardscale].txt
+   * __Cell line index file__: data/cell2ind_final.txt
+   * __Gene index file__: data/gene2ind_final.txt
+   * __Drug index file__: data/gene2ind_final.txt
+   * __Ontology graph file__: data/ontology_final.txt
+   * __Drug fingerprint embedded file__: data/drug2fingerprint_2048.txt
      
 2. Drug-target interaction information file
-   *__Perturbation score output file__*: data/NetGP_profile.out
-   *__Drug smiles data__*: data/drug_smiles.tsv
-   *__Drug target information file__*: data/drug_target_info.tsv
+   * __Perturbation score output file__: data/NetGP_profile.out
+   * __Drug smiles data__: data/drug_smiles.tsv
+   * __Drug target information file__: data/drug_target_info.tsv
 
 For changing the drug data, you may visit https://github.com/minwoopak/NetGP to calculate the new perturbation score result. The obtained result file may substitute the _data/NeGP_profile.out_ file. 
 
