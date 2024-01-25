@@ -9,6 +9,12 @@ from scipy.stats import spearmanr
 import torch.nn as nn
 from lifelines.utils import concordance_index
 
+
+'''
+The code for the creation of ontology graph network has been largely
+inspired by DrugCell code by Kuenzi et.
+'''
+
 def pearson_corr(x, y):
     xx = x - torch.mean(x)
     yy = y - torch.mean(y)
@@ -80,7 +86,6 @@ def load_ontology(file_name, gene2id_mapping):
             if child in term_direct_gene_map:
                 term_gene_set = term_gene_set | term_direct_gene_map[child]
 
-        # jisoo
         if len(term_gene_set) == 0:
             print('There is empty terms, please delete term:', term)
             sys.exit(1)
@@ -151,7 +156,6 @@ def load_mapping(mapping_file):
 
 
 def prepare_train_data(train_file, test_file, cell2id_mapping_file, drug2id_mapping_file):
-
     # load mapping files
     cell2id_mapping = load_mapping(cell2id_mapping_file)
     drug2id_mapping = load_mapping(drug2id_mapping_file)
@@ -166,9 +170,6 @@ def prepare_train_data(train_file, test_file, cell2id_mapping_file, drug2id_mapp
 
 
 def build_input_vector(input_data, cell_features, drug_features):
-    # normalize cell_features' expression value
-#     cell_features = normalize(cell_features)
-
     genedim = len(cell_features[0,:])
     drugdim = len(drug_features[0,:])
     feature = np.zeros((input_data.size()[0], (genedim+drugdim+1)))
@@ -200,7 +201,6 @@ def build_input_vector_tta(inputdata, cell_features, drug_features):
     drug_idx = torch.from_numpy(drug_idx).float()
 
     return cell_feature, drug_feature, drug_idx
-    # drug_idx shape: (bsz, 1)
 
 
 
