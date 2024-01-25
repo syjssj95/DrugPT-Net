@@ -166,7 +166,7 @@ class drugpt(nn.Module):
                 self.add_module(term+'_linear_layer', nn.Linear(input_size, term_hidden))
                 self.add_module(term+'_batchnorm_layer', nn.BatchNorm1d(term_hidden))
                 
-                self.add_module(term+'_gate_layer', nn.Linear(self.gene_embed_dim+self.num_hiddens_drug[-1], 1)
+                self.add_module(term+'_gate_layer', nn.Linear(self.gene_embed_dim+self.num_hiddens_drug[-1], 1))
                 
                 self.add_module(term+'_aux_linear_layer1', nn.Linear(self.gene_embed_dim,1))
                 self.add_module(term+'_aux_linear_layer2', nn.Linear(1,1))

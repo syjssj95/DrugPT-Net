@@ -139,9 +139,9 @@ def train_model(root, term_size_map, term_direct_gene_map, dG, train_data, gene_
                         loss_train += 0.2 * loss(output, cuda_labels)
                 total_loss_train += loss_train
 
-                if i%10 == 0:
-                    log_dict = {'train/loss': total_loss_train/(i+1), 'train/rmse': rmse(train_predict, tot_labels), 'train/pearson': pearson_corr(train_predict, tot_labels), 'train/spearman': spearman_corr(train_predict, tot_labels), 'train/ci': ci(train_predict, tot_labels), 'epoch': epoch, 'step': i}
-                    wandb.log(log_dict)
+                # if i%10 == 0:
+                #     log_dict = {'train/loss': total_loss_train/(i+1), 'train/rmse': rmse(train_predict, tot_labels), 'train/pearson': pearson_corr(train_predict, tot_labels), 'train/spearman': spearman_corr(train_predict, tot_labels), 'train/ci': ci(train_predict, tot_labels), 'epoch': epoch, 'step': i}
+                #     wandb.log(log_dict)
 
                 loss_train.backward()
 
@@ -194,10 +194,10 @@ def train_model(root, term_size_map, term_direct_gene_map, dG, train_data, gene_
                             loss_val = loss(output, cuda_labels)
                     total_loss_val += loss_val
                        
-                    if i%10 == 0:
+                    # if i%10 == 0:
     
-                        log_dict = {'val/loss': total_loss_val/(i+1), 'val/rmse': rmse(test_predict, test_tot_labels), 'val/pearson': pearson_corr(test_predict, test_tot_labels), 'val/spearman': spearman_corr(test_predict, test_tot_labels), 'val/ci': ci(test_predict, test_tot_labels), 'epoch': epoch, 'step': i}
-                        wandb.log(log_dict)
+                    #     log_dict = {'val/loss': total_loss_val/(i+1), 'val/rmse': rmse(test_predict, test_tot_labels), 'val/pearson': pearson_corr(test_predict, test_tot_labels), 'val/spearman': spearman_corr(test_predict, test_tot_labels), 'val/ci': ci(test_predict, test_tot_labels), 'epoch': epoch, 'step': i}
+                    #     wandb.log(log_dict)
 
         test_pearson = pearson_corr(test_predict, test_tot_labels)
         test_spearman = spearman_corr(test_predict, test_tot_labels)
@@ -229,19 +229,19 @@ def train_model(root, term_size_map, term_direct_gene_map, dG, train_data, gene_
     torch.save(best_model_save, model_save_folder + '/model_best_' + str(best_model_epoch) + '.pt')
     torch.save(model, model_save_folder + '/model_final.pt')
 
-    wandb.summary.update({
-        'train_total_loss': train_loss,
-        'train_pearson': train_pearson,
-        'train_spearman': train_spearman,
-        'train_rmse': train_rmse,
-        'train_ci': train_ci,
-        'test_loss': test_loss,
-        'test_pearson': test_pearson,
-        'test_spearman': test_spearman,
-        'test_rmse': test_rmse,
-        'test_ci': test_ci,
-        'best performed model (epoch)': best_model_epoch
-    })
+    # wandb.summary.update({
+    #     'train_total_loss': train_loss,
+    #     'train_pearson': train_pearson,
+    #     'train_spearman': train_spearman,
+    #     'train_rmse': train_rmse,
+    #     'train_ci': train_ci,
+    #     'test_loss': test_loss,
+    #     'test_pearson': test_pearson,
+    #     'test_spearman': test_spearman,
+    #     'test_rmse': test_rmse,
+    #     'test_ci': test_ci,
+    #     'best performed model (epoch)': best_model_epoch
+    # })
 
     print("Best performed model (epoch)\t%d" % best_model_epoch)
 
@@ -249,16 +249,16 @@ def train_model(root, term_size_map, term_direct_gene_map, dG, train_data, gene_
 parser = argparse.ArgumentParser(description='Train dcell')
 parser.add_argument('-data_type', help='type of training data', type=str, default='IC50')
 parser.add_argument('-cv', help='cross validation number', type=int, default=1)
-parser.add_argument('-epoch', help='Training epochs for training', type=int, default=300)
-parser.add_argument('-lr', help='Learning rate', type=float, default=0.001)
-parser.add_argument('-batchsize', help='Batchsize', type=int, default=5000)
+parser.add_argument('-epoch', help='Training epochs for training', type=int, default=100)
+parser.add_argument('-lr', help='Learning rate', type=float, default=0.01)
+parser.add_argument('-batchsize', help='Batchsize', type=int, default=512)
 parser.add_argument('-cuda', help='Specify GPU', type=int, default=0)
 parser.add_argument('-seed', type=int, default=1234)
 parser.add_argument('-genotype_hiddens', help='Mapping for the number of neurons in each term in genotype parts', type=int, default=6)
 parser.add_argument('-drug_hiddens', help='Mapping for the number of neurons in each layer', type=str, default='100,50,6')
 parser.add_argument('-final_hiddens', help='The number of neurons in the top layer', type=int, default=6)
 parser.add_argument('-gamma', help='Gamma value for gene expression vectorizing', type=str, default=0.1)
-parser.add_argument('-gene_embed_dim', type=int, default=128)
+parser.add_argument('-gene_embed_dim', type=int, default=16)
 parser.add_argument('-netgp_top', type=int, default=200)
 parser.add_argument('-runname', help='run name on wandb', type=str)
 
@@ -271,15 +271,15 @@ torch.set_printoptions(precision=5)
 
 runname = f'cv{opt.cv}_{opt.runname}'
 
-wandb.init(
-    project='drug_response',
-    name = runname
-      )
-wandb.config.update(opt)
+# wandb.init(
+#     project='drug_response',
+#     name = runname
+#       )
+# wandb.config.update(opt)
 
 seed_everything()
 
-data_dir = "/data/project/yeojin/drug_response_2023/MyModel/data/mydata" # should be changed to where the data has been located
+data_dir = "/data/project/yeojin/drug_response_2023/DrugPT-Net/data" # should be changed to where the data has been located
 
 gene2id = os.path.join(data_dir, 'gene2ind_final.txt')
 drug2id = os.path.join(data_dir, 'drug2ind_final.txt')
@@ -288,12 +288,12 @@ cell2id = os.path.join(data_dir, 'cell2ind_final.txt')
 genotype = os.path.join(data_dir, 'cell2exp_final.txt')
 fingerprint = os.path.join(data_dir, 'drug2fingerprint_2048.txt')
 
-onto = os.path.join(data_dir, 'drugcell_ont_final.txt')
+onto = os.path.join(data_dir, 'ontology_final.txt')
 
 
 print(f"# ======= CV: {opt.cv} Train ======= #")
-train_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_cell_split/train_{opt.data_type}_cell_cv{opt.cv}.txt')
-val_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_cell_split/valid_{opt.data_type}_cell_cv{opt.cv}.txt')
+train_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_revised/train_{opt.data_type}_random_cv{opt.cv}.txt')
+val_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_revised/valid_{opt.data_type}_random_cv{opt.cv}.txt')
 
 # load input data
 train_data, cell2id_mapping, drug2id_mapping = prepare_train_data(train_dir, val_dir, cell2id, drug2id)
@@ -318,11 +318,11 @@ def top_n_to_1(row, n= opt.netgp_top):
     return row
 
 # create perturbation table from NetGP result 
-netGP = pd.read_csv('data/mydata/netGP_profile.out', sep='\t') # should be changed to where the data have been located
+netGP = pd.read_csv('data/netGP_profile.out', sep='\t') # should be changed to where the data have been located
 netGP_col = netGP.columns[2:]
 netGP[netGP_col] = netGP[netGP_col].apply(top_n_to_1, axis=1)
 
-drug_target = pd.read_csv('data/mydata/drug_target_info.tsv', sep='\t') # should be changed to where the data have been located
+drug_target = pd.read_csv('data/drug_target_info.tsv', sep='\t') # should be changed to where the data have been located
 for i, row in drug_target.iterrows():
     if row.gene_name in netGP_col:
         netGP.loc[netGP['drug_name'] == row.drug_name, row.gene_name] = 2
@@ -355,7 +355,7 @@ for key in keys:
     test_result_df[key] = []
 
 print(f"# ======= CV: {opt.cv} Test ======= #")
-test_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_cell_split/test_{opt.data_type}_cell_cv{opt.cv}.txt')
+test_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_revised/test_{opt.data_type}_random_cv{opt.cv}.txt')
 
 predict_data, cell2id_mapping, drug2id_mapping = prepare_predict_data(test_dir, cell2id, drug2id)
 
@@ -365,7 +365,7 @@ createFolder(f'results/Result_cvdata_{opt.runname}')
 result_dir = f'results/Result_cvdata_{opt.runname}/cv_{opt.cv}'
 hidden_dir = f'results/Hidden_cvdata_{opt.runname}/cv_{opt.cv}'
 
-load_dir = glob.glob(f'/data/project/yeojin/drug_response_2023/MyModel/{model_dir}/model_best_*.pt')
+load_dir = glob.glob(f'/data/project/yeojin/drug_response_2023/DrugPT-Net/{model_dir}/model_best_*.pt')
 
 predict(predict_data, num_genes, drug_dim, load_dir[0], hidden_dir, opt.test_batchsize, result_dir, cell_features, drug_features, perturb_table, test_result_df, opt.cv, CUDA_ID)
 

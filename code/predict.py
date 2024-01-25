@@ -101,10 +101,10 @@ def predict(predict_data, gene_dim, drug_dim, model_file, hidden_folder, batch_s
                 test_rmse = rmse(test_predict, labels_gpu)
                 test_ci = ci(test_predict, labels_gpu)
         
-                print(f"batch_num: {batch_num}, test_loss: {test_loss_out:.6f}, test rmse: {test_rmse:.6f}, test pearson corr: {test_pearson:.6f}, test spearman corr: {test_spearman:.6f}, test ci: {test_ci:.6f}")
+                # print(f"batch_num: {batch_num}, test_loss: {test_loss_out:.6f}, test rmse: {test_rmse:.6f}, test pearson corr: {test_pearson:.6f}, test spearman corr: {test_spearman:.6f}, test ci: {test_ci:.6f}")
         
-                log_dict = {'test/loss': tot_test_loss/(i+1), 'test/rmse': test_rmse, 'test/pearson': test_pearson, 'test/spearman': test_spearman, 'test/ci': test_ci, 'step': batch_num}
-                wandb.log(log_dict)
+                # log_dict = {'test/loss': tot_test_loss/(i+1), 'test/rmse': test_rmse, 'test/pearson': test_pearson, 'test/spearman': test_spearman, 'test/ci': test_ci, 'step': batch_num}
+                # wandb.log(log_dict)
     
                 tstepoch.set_postfix(loss=test_loss_out.item())        
                 batch_num += 1
@@ -117,13 +117,13 @@ def predict(predict_data, gene_dim, drug_dim, model_file, hidden_folder, batch_s
     
     print(f"test_loss: {final_test_loss:.6f}, test rmse: {test_rmse:.6f}, test pearson corr: {test_pearson_corr:.6f}, test spearman corr: {test_spearman_corr:.6f}, test ci: {test_ci:.6f}")
     
-    wandb.summary.update({
-        'test_loss': final_test_loss,
-        'test_rmse': test_rmse,
-        'test_pearson': test_pearson_corr,
-        'test_spearman': test_spearman_corr,
-        'test_ci': test_ci
-    })
+    # wandb.summary.update({
+    #     'test_loss': final_test_loss,
+    #     'test_rmse': test_rmse,
+    #     'test_pearson': test_pearson_corr,
+    #     'test_spearman': test_spearman_corr,
+    #     'test_ci': test_ci
+    # })
 
     test_result_df['CV'].append(cv)
     test_result_df['loss'].append((final_test_loss).cpu().detach().numpy())
@@ -150,15 +150,15 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     torch.set_printoptions(precision=5)
     
-    wandb.init(
-        project='drug_response',
-        name = opt.runname
-              )
-    wandb.config.update(opt)
+    # wandb.init(
+    #     project='drug_response',
+    #     name = opt.runname
+    #           )
+    # wandb.config.update(opt)
     
     seed_everything()
     
-    data_dir = "/data/project/yeojin/drug_response_2023/MyModel/data/mydata" # should be changed to where the data have been located
+    data_dir = "/data/project/yeojin/drug_response_2023/DrugPT-Net/data" # should be changed to where the data have been located
     
     gene2id = os.path.join(data_dir, 'gene2ind_final.txt')
     drug2id = os.path.join(data_dir, 'drug2ind_final.txt')
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     
     
     print(f"# ======= CV: {opt.cv} ======= #")
-    test_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_cell_split/test_{opt.data_type}_cell_cv{opt.cv}.txt')
+    test_dir = os.path.join(data_dir, f'model_input/{opt.data_type}_revised/test_{opt.data_type}_random_cv{opt.cv}.txt')
     
     CUDA_ID = opt.cuda
     
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         row[sorted_row[-n:]] = 1
         return row
     
-    netGP = pd.read_csv('data/mydata/netGP_profile.out', sep='\t').drop(columns=['drug_name']) # should be changed to where the data have been located
+    netGP = pd.read_csv('data/netGP_profile.out', sep='\t').drop(columns=['drug_name']) # should be changed to where the data have been located
     netGP_col = netGP.columns[1:]
     netGP[netGP_col] = netGP[netGP_col].apply(top_n_to_1, axis=1)
     
@@ -214,8 +214,8 @@ if __name__ == "__main__":
     result_dir = os.path.join(opt.result, f'cv_{opt.cv}')
     hidden_dir = os.path.join(opt.hidden, f'cv_{opt.cv}')
     
-    load_dir = glob.glob(f'/data/project/yeojin/drug_response_2023/MyModel/{opt.load}/cv_{opt.cv}/model_best_*.pt')
-    # load_dir = f'/data/project/yeojin/drug_response_2023/MyModel/{opt.load}/cv_{opt.cv}/model_50.pt'
+    load_dir = glob.glob(f'/data/project/yeojin/drug_response_2023/DrugPT-Net/{opt.load}/cv_{opt.cv}/model_best_*.pt')
+    # load_dir = f'/data/project/yeojin/drug_response_2023/DrugPT-Net/{opt.load}/cv_{opt.cv}/model_50.pt'
     
     predict(predict_data, num_genes, drug_dim, load_dir[0], hidden_dir, opt.batchsize, result_dir, cell_features, drug_features, perturb_table, test_result_df, opt.cv, CUDA_ID)	
     
