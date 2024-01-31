@@ -193,13 +193,13 @@ class drugpt(nn.Module):
 
         gene_input_final_permute = gene_input_final.permute(0, 2, 1)
 
-        # define forward function for drug dcell #################################################
+        # drug embedding #################################################
         drug_out = drug_input
 
         for i in range(1, len(self.num_hiddens_drug)+1, 1):
             drug_out = self._modules['drug_batchnorm_layer_'+str(i)]( torch.tanh(self._modules['drug_linear_layer_' + str(i)](drug_out)))	
 
-        # define forward function for genotype dcell #############################################
+        # cell line embedding #############################################
         term_gene_out_map = {}
 
         for term, _ in self.term_direct_gene_map.items():
